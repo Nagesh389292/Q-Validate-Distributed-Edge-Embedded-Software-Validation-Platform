@@ -53,8 +53,17 @@ Modern semiconductor and edge computing platforms (such as Qualcomm Snapdragon X
 
 ## 🖼 Platform UI & Live Demonstration Gallery
 
+### 📹 Live End-to-End Platform Tour Video (Walkthrough Demo)
+
+![Q-Validate Live Platform Tour](./docs/images/qvalidate_platform_demo.webp)
+
+*Interactive UI walkthrough demonstrating Executive Dashboard, Live 25↔50 Pod Scaling, Pod Termination Chaos Self-Healing, Metrics-Server HPA, Performance Benchmarks, and OpenTelemetry Distributed Traces.*
+
+---
+
 | Executive Overview & Kubernetes Command Center | Device Farm Node Matrix Visualizer |
 |---|---|
+
 | ![Overview Dashboard](./docs/images/overview_dashboard.png) | ![Device Farm Matrix](./docs/images/device_farm_matrix.png) |
 | **Live Cluster Topology, Pod Health & Metrics** | **Interactive 25-100 Pod Kubernetes Replica Scaling** |
 
