@@ -101,3 +101,15 @@ kubectl apply -f k8s/ingress.yaml
 - **Kubernetes Infrastructure vs Edge Device Simulation**:
   - *Infrastructure*: Kubernetes manages microservices (FastAPI control plane, Go scheduler, PostgreSQL, Prometheus, Grafana, Ingress).
   - *Simulation*: C++20 gRPC containers simulate hardware edge devices (Snapdragon, Hexagon DSP), providing realistic telemetry and fault injection without requiring physical hardware racks during software validation.
+
+---
+
+## 📄 Recommended Resume Bullet Points
+
+> **Headline Resume Statement**: Built and deployed a distributed embedded/edge software validation platform on a local Kubernetes cluster, implementing autoscaling, self-healing, observability, distributed scheduling, device-farm orchestration and empirical concurrency benchmarking.
+
+- **Distributed Systems & Kubernetes**: Architected a microservices-based validation control plane orchestrated via Kubernetes (Docker Desktop `v1.36.1`), implementing RBAC, Ingress routing, metrics-server, and Horizontal Pod Autoscaling (HPA 3 → 6 replicas under load).
+- **C++ / Go / Python Telemetry Engine**: Developed a C++20 gRPC simulated device node runtime, Go distributed scheduler, and FastAPI control plane managing 25-100 edge nodes with real-time health telemetry.
+- **Chaos Engineering & Resilience**: Integrated automated Kubernetes self-healing and pod termination workflows, achieving sub-3s recovery across ReplicaSet-managed device nodes.
+- **Observability & Performance Benchmarking**: Deployed in-cluster Prometheus, Grafana dashboards, and OpenTelemetry distributed tracing; conducted empirical concurrency benchmarks comparing SQLite lock contention vs PostgreSQL connection pooling up to 100 parallel device nodes.
+
