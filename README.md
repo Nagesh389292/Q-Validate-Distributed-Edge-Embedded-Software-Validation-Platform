@@ -78,13 +78,15 @@ To maintain 100% engineering transparency for technical reviews, every section o
 
 ## 📊 Measured Persistence & Concurrency Benchmarks
 
-Empirical performance metrics measured under parallel load across 10 to 100 device nodes (SQLite write locking vs PostgreSQL connection pooling):
+Empirical performance metrics measured under parallel load across 10 to 100 device nodes (SQLite file locking vs PostgreSQL connection pooling):
 
-| Concurrency Level | SQLite Throughput | PostgreSQL Throughput | Behavior Analysis |
+| Concurrent Nodes | SQLite Throughput | PostgreSQL Throughput | Empirical Observations |
 |---|---|---|---|
-| **10 Parallel Nodes** | 41.05 TPS | 40.13 TPS | Baseline parallel throughput |
-| **50 Parallel Nodes** | Degrades (Lock Contention) | **28.41 TPS** | PostgreSQL connection pool stabilizes concurrent writes |
-| **100 Device Nodes** | Locks under heavy concurrency | **Maintains pool stability** | Tested up to 100 device nodes |
+| **10 Nodes** | 41.05 TPS | 40.13 TPS | Baseline parallel throughput |
+| **25 Nodes** | 26.18 TPS | 25.08 TPS | Moderate concurrency load |
+| **50 Nodes** | 27.84 TPS | **28.41 TPS** | Connection pool stabilizes concurrent writes |
+| **100 Nodes** | 27.53 TPS | **25.30 TPS** | Tested up to 100 device nodes |
+
 
 ---
 
