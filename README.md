@@ -51,6 +51,26 @@ Modern semiconductor and edge computing platforms (such as Qualcomm Snapdragon X
 
 ---
 
+## 🖼 Platform UI & Live Demonstration Gallery
+
+| Executive Overview & Kubernetes Command Center | Device Farm Node Matrix Visualizer |
+|---|---|
+| ![Overview Dashboard](./docs/images/overview_dashboard.png) | ![Device Farm Matrix](./docs/images/device_farm_matrix.png) |
+| **Live Cluster Topology, Pod Health & Metrics** | **Interactive 25-100 Pod Kubernetes Replica Scaling** |
+
+| Resilience, Chaos Lab & HPA Scale-Out | Performance Lab & Persistence Benchmarks |
+|---|---|
+| ![Resilience & HPA](./docs/images/chaos_resilience_hpa.png) | ![Performance Benchmarks](./docs/images/performance_benchmarks.png) |
+| **Pod Termination Self-Healing & HPA CPU Stress** | **10-100 Node SQLite vs PostgreSQL Concurrency** |
+
+| OpenTelemetry Distributed Trace Inspector |
+|---|
+| ![OpenTelemetry Tracing](./docs/images/opentelemetry_tracing.png) |
+| **End-to-End Latency Breakdown & Microservice Spans** |
+
+---
+
+
 ## 🔍 Data Origin Matrix (Live vs Simulated vs Measured vs Defined)
 
 To maintain 100% engineering transparency for technical reviews, every section of the platform explicitly identifies its data origin:
