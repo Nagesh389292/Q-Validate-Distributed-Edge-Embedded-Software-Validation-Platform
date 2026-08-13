@@ -1,0 +1,68 @@
+---
+# ServiceAccount for qvalidate FastAPI control plane pods
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: qvalidate-api-sa
+  namespace: qvalidate-system
+  labels:
+    app: qvalidate-control-plane
+    component: rbac
+
+---
+# ClusterRole granting read access to cluster state + scale deployments
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: qvalidate-k8s-reader
+  labels:
+    app: qvalidate-control-plane
+    component: rbac
+rules:
+  # Read cluster topology (nodes, namespaces)
+  - apiGroups: [""]
+    resources: ["nodes", "namespaces", "services", "endpoints", "pods", "pods/log"]
+    verbs: ["get", "list", "watch"]
+
+  # Deployments, ReplicaSets — read + scale
+  - apiGroups: ["apps"]
+    resources: ["deployments", "replicasets", "statefulsets", "daemonsets"]
+    verbs: ["get", "list", "watch"]
+
+  # Scale deployments (for /farm scaling and /resilience)
+  - apiGroups: ["apps"]
+    resources: ["deployments/scale"]
+    verbs: ["get", "update", "patch"]
+
+  # Delete pods (for chaos/resilience lab)
+  - apiGroups: [""]
+    resources: ["pods"]
+    verbs: ["get", "list", "watch", "delete"]
+
+  # Rollout restart via patch on deployments
+  - apiGroups: ["apps"]
+    resources: ["deployments"]
+    verbs: ["get", "list", "watch", "patch", "update"]
+
+  # HPA access (for /resilience HPA monitoring)
+  - apiGroups: ["autoscaling"]
+    resources: ["horizontalpodautoscalers"]
+    verbs: ["get", "list", "watch"]
+
+---
+# Bind the ClusterRole to the ServiceAccount
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: qvalidate-api-k8s-reader-binding
+  labels:
+    app: qvalidate-control-plane
+    component: rbac
+subjects:
+  - kind: ServiceAccount
+    name: qvalidate-api-sa
+    namespace: qvalidate-system
+roleRef:
+  kind: ClusterRole
+  name: qvalidate-k8s-reader
+  apiGroup: rbac.authorization.k8s.io

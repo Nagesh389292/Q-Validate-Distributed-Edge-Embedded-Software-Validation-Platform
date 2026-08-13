@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: qvalidate-go-scheduler
+  namespace: qvalidate-system
+  labels:
+    app: qvalidate-go-scheduler
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: qvalidate-go-scheduler
+  template:
+    metadata:
+      labels:
+        app: qvalidate-go-scheduler
+    spec:
+      containers:
+      - name: go-scheduler
+        image: qvalidate-go-scheduler:v1.0.0
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 8080
+        resources:
+          requests:
+            memory: "128Mi"
+            cpu: "100m"
+          limits:
+            memory: "256Mi"
+            cpu: "250m"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: qvalidate-go-scheduler-service
+  namespace: qvalidate-system
+spec:
+  type: ClusterIP
+  ports:
+  - port: 8080
+    targetPort: 8080
+  selector:
+    app: qvalidate-go-scheduler

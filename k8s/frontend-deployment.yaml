@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: qvalidate-frontend
+  namespace: qvalidate-system
+  labels:
+    app: qvalidate-frontend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: qvalidate-frontend
+  template:
+    metadata:
+      labels:
+        app: qvalidate-frontend
+    spec:
+      containers:
+      - name: frontend
+        image: qvalidate-frontend:v1.2.0
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 3000
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "200m"
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: qvalidate-frontend-service
+  namespace: qvalidate-system
+spec:
+  type: NodePort
+  ports:
+  - port: 3000
+    targetPort: 3000
+    nodePort: 30300
+  selector:
+    app: qvalidate-frontend

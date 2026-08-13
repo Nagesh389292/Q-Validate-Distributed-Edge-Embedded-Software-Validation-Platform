@@ -1,0 +1,63 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: qvalidate-control-plane
+  namespace: qvalidate-system
+  labels:
+    app: qvalidate-control-plane
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: qvalidate-control-plane
+  template:
+    metadata:
+      labels:
+        app: qvalidate-control-plane
+    spec:
+      serviceAccountName: qvalidate-api-sa
+      containers:
+      - name: control-plane
+        image: qvalidate-fastapi:v1.0.9
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 8000
+        env:
+        - name: DATABASE_BACKEND
+          value: "postgres"
+        - name: DATABASE_URL
+          value: "postgresql://qvalidate:secretpassword@postgres-service:5432/qvalidate_db"
+        - name: KAFKA_BOOTSTRAP_SERVERS
+          value: "kafka-service:9092"
+        livenessProbe:
+          httpGet:
+            path: /health/live
+            port: 8000
+          initialDelaySeconds: 5
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /health/ready
+            port: 8000
+          initialDelaySeconds: 5
+          periodSeconds: 10
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "250m"
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: qvalidate-control-plane-service
+  namespace: qvalidate-system
+spec:
+  type: ClusterIP
+  ports:
+  - port: 8000
+    targetPort: 8000
+  selector:
+    app: qvalidate-control-plane

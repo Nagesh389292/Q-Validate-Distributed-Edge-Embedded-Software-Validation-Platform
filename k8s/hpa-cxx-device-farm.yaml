@@ -1,0 +1,21 @@
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: qvalidate-cxx-device-farm-hpa
+  namespace: qvalidate-system
+  labels:
+    app: qvalidate-cxx-device-farm
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: qvalidate-cxx-device-farm
+  minReplicas: 25
+  maxReplicas: 100
+  metrics:
+  - type: Resource
+    resource:
+      name: cpu
+      target:
+        type: Utilization
+        averageUtilization: 70

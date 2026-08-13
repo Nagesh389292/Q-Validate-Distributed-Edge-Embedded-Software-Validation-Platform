@@ -1,0 +1,23 @@
+{
+  "index_patterns": ["qvalidate-logs-*"],
+  "template": {
+    "settings": {
+      "number_of_shards": 1,
+      "number_of_replicas": 0
+    },
+    "mappings": {
+      "properties": {
+        "@timestamp": { "type": "date" },
+        "trace_id": { "type": "keyword" },
+        "span_id": { "type": "keyword" },
+        "run_id": { "type": "keyword" },
+        "device_id": { "type": "keyword" },
+        "build_id": { "type": "keyword" },
+        "service": { "type": "keyword" },
+        "level": { "type": "keyword" },
+        "message": { "type": "text" },
+        "payload": { "type": "object" }
+      }
+    }
+  }
+}

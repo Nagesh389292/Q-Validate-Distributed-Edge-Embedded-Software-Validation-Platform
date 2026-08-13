@@ -1,0 +1,157 @@
+syntax = "proto3";
+
+package qvalidate;
+
+option java_package = "com.qualcomm.qvalidate.grpc";
+option java_multiple_files = true;
+
+// Service definition for controlling and querying simulated embedded devices
+service DeviceService {
+  rpc GetStatus (GetStatusRequest) returns (GetStatusResponse);
+  rpc PowerOn (PowerOnRequest) returns (PowerOnResponse);
+  rpc PowerOff (PowerOffRequest) returns (PowerOffResponse);
+  rpc Reset (ResetRequest) returns (ResetResponse);
+  rpc DeployBuild (DeployBuildRequest) returns (DeployBuildResponse);
+  rpc InjectFault (InjectFaultRequest) returns (InjectFaultResponse);
+  rpc ClearFault (ClearFaultRequest) returns (ClearFaultResponse);
+  rpc ExecuteCommand (ExecuteCommandRequest) returns (ExecuteCommandResponse);
+  rpc CollectMetrics (CollectMetricsRequest) returns (CollectMetricsResponse);
+}
+
+enum DeviceState {
+  STATE_UNKNOWN = 0;
+  STATE_POWERED_OFF = 1;
+  STATE_BOOTING = 2;
+  STATE_INITIALIZING = 3;
+  STATE_READY = 4;
+  STATE_DEGRADED = 5;
+  STATE_ERROR = 6;
+}
+
+enum FaultType {
+  FAULT_NONE = 0;
+  FAULT_CPU_OVERLOAD = 1;
+  FAULT_MEMORY_PRESSURE = 2;
+  FAULT_NETWORK_LATENCY = 3;
+  FAULT_PROCESS_CRASH = 4;
+  FAULT_INVALID_CONFIG = 5;
+  FAULT_CORRUPTED_FIRMWARE = 6;
+}
+
+message GetStatusRequest {
+  string device_id = 1;
+}
+
+message GetStatusResponse {
+  string device_id = 1;
+  DeviceState state = 2;
+  string firmware_version = 3;
+  double uptime_seconds = 4;
+  double cpu_usage_pct = 5;
+  double memory_used_mb = 6;
+  double memory_total_mb = 7;
+  double temperature_celsius = 8;
+  bool is_healthy = 9;
+  string active_fault = 10;
+}
+
+message PowerOnRequest {
+  string device_id = 1;
+}
+
+message PowerOnResponse {
+  bool success = 1;
+  string message = 2;
+  DeviceState new_state = 3;
+  double boot_duration_seconds = 4;
+}
+
+message PowerOffRequest {
+  string device_id = 1;
+}
+
+message PowerOffResponse {
+  bool success = 1;
+  string message = 2;
+  DeviceState new_state = 3;
+}
+
+message ResetRequest {
+  string device_id = 1;
+  bool hard_reset = 2;
+}
+
+message ResetResponse {
+  bool success = 1;
+  string message = 2;
+  DeviceState new_state = 3;
+  double reset_duration_seconds = 4;
+}
+
+message DeployBuildRequest {
+  string device_id = 1;
+  string build_id = 2;
+  string firmware_version = 3;
+  string payload_hash = 4;
+}
+
+message DeployBuildResponse {
+  bool success = 1;
+  string message = 2;
+  string installed_version = 3;
+  double deployment_duration_seconds = 4;
+}
+
+message InjectFaultRequest {
+  string device_id = 1;
+  FaultType fault_type = 2;
+  double intensity = 3; // e.g. 0.0 to 1.0 or target MB/CPU load %
+  int32 duration_seconds = 4;
+}
+
+message InjectFaultResponse {
+  bool success = 1;
+  string message = 2;
+  string active_fault = 3;
+}
+
+message ClearFaultRequest {
+  string device_id = 1;
+}
+
+message ClearFaultResponse {
+  bool success = 1;
+  string message = 2;
+}
+
+message ExecuteCommandRequest {
+  string device_id = 1;
+  string command = 2;
+  map<string, string> args = 3;
+}
+
+message ExecuteCommandResponse {
+  bool success = 1;
+  int32 exit_code = 2;
+  string stdout_output = 3;
+  string stderr_output = 4;
+  double duration_seconds = 5;
+}
+
+message CollectMetricsRequest {
+  string device_id = 1;
+  int32 sample_count = 2;
+}
+
+message MetricSample {
+  double timestamp = 1;
+  double cpu_pct = 2;
+  double memory_mb = 3;
+  double temp_celsius = 4;
+  double net_throughput_kbps = 5;
+}
+
+message CollectMetricsResponse {
+  string device_id = 1;
+  repeated MetricSample samples = 2;
+}

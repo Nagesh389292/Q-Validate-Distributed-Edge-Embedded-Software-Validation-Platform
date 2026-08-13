@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: qvalidate-cxx-device-farm
+  namespace: qvalidate-system
+  labels:
+    app: qvalidate-cxx-device-farm
+spec:
+  replicas: 25 # Scalable up to 50 or 100 pods in Kubernetes cluster
+  selector:
+    matchLabels:
+      app: qvalidate-cxx-device-farm
+  template:
+    metadata:
+      labels:
+        app: qvalidate-cxx-device-farm
+    spec:
+      containers:
+      - name: cxx-device-node
+        image: qvalidate-cxx-device:v1.0.1
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 50051 # gRPC Port
+        env:
+        - name: DEVICE_ID_PREFIX
+          value: "K8S-DEV"
+        resources:
+          requests:
+            memory: "64Mi"
+            cpu: "50m"
+          limits:
+            memory: "128Mi"
+            cpu: "100m"
