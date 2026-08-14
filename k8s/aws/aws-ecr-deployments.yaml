@@ -1,0 +1,54 @@
+# AWS EKS Container Image Overlay Spec (AWS ECR URIs)
+# Replace <ACCOUNT_ID> and <REGION> with actual AWS credentials when deploying to EKS
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: qvalidate-control-plane
+  namespace: qvalidate-system
+spec:
+  template:
+    spec:
+      containers:
+        - name: control-plane
+          image: <ACCOUNT_ID>.dkr.ecr.<REGION>.amazonaws.com/qvalidate-fastapi:v1.0.9
+          imagePullPolicy: IfNotPresent
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: qvalidate-go-scheduler
+  namespace: qvalidate-system
+spec:
+  template:
+    spec:
+      containers:
+        - name: go-scheduler
+          image: <ACCOUNT_ID>.dkr.ecr.<REGION>.amazonaws.com/qvalidate-go-scheduler:v1.0.0
+          imagePullPolicy: IfNotPresent
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: qvalidate-cxx-device-farm
+  namespace: qvalidate-system
+spec:
+  template:
+    spec:
+      containers:
+        - name: cxx-device-runtime
+          image: <ACCOUNT_ID>.dkr.ecr.<REGION>.amazonaws.com/qvalidate-cxx-device:v1.0.1
+          imagePullPolicy: IfNotPresent
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: qvalidate-frontend
+  namespace: qvalidate-system
+spec:
+  template:
+    spec:
+      containers:
+        - name: frontend
+          image: <ACCOUNT_ID>.dkr.ecr.<REGION>.amazonaws.com/qvalidate-frontend:v1.2.0
+          imagePullPolicy: IfNotPresent

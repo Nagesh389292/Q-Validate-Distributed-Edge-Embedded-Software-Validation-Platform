@@ -51,6 +51,54 @@ Modern semiconductor and edge computing platforms (such as Qualcomm Snapdragon X
 
 ---
 
+## ☁️ AWS EKS Cloud Architecture & Manifest Overlays
+
+In addition to local Docker Desktop Kubernetes validation, Q-Validate includes production-ready **Amazon Elastic Kubernetes Service (AWS EKS)** deployment overlays, ECR container pipelines, and AWS ALB load balancer configurations:
+
+```mermaid
+graph TD
+    Client[Internet / Browser] -->|HTTP Public Endpoint| ALB[AWS Application Load Balancer]
+    
+    subgraph AWS VPC - EKS Cluster (qvalidate-eks-cluster)
+        subgraph Public Subnets
+            ALB -->|Target Group| Ingress[AWS ALB Ingress Controller]
+        end
+        
+        subgraph Private Node Group (t3.medium Managed Worker Nodes)
+            Ingress -->|Path /| Frontend[Next.js Portal - 1 Pod]
+            Ingress -->|Path /api| ControlPlane[FastAPI Control Plane - 3 to 10 HPA Pods]
+            
+            ControlPlane -->|gRPC / HTTP| Scheduler[Go Distributed Scheduler - 2 Pods]
+            ControlPlane -->|SQL Pool| Postgres[(PostgreSQL DB - 1 Pod)]
+            
+            Scheduler -->|gRPC Execution| CxxFarm[C++ Device Farm - 25 to 100 HPA Pods]
+            
+            MetricsServer[Metrics Server] -->|Resource Metrics| HPA[Horizontal Pod Autoscaler]
+            HPA -->|Scale Trigger| ControlPlane
+            HPA -->|Scale Trigger| CxxFarm
+            
+            Prometheus[Prometheus Monitoring - NodePort 30090] -->|Scrape /metrics| ControlPlane
+            Prometheus -->|Scrape /metrics| Scheduler
+            Grafana[Grafana Analytics - NodePort 30301] -->|Query| Prometheus
+        end
+    end
+```
+
+### Deployment Environment Comparison
+
+| Dimension | Local Kubernetes Validation | Temporary AWS EKS Cloud Overlay |
+|---|---|---|
+| **Orchestrator** | Docker Desktop Kubernetes (`v1.36.1`) | Amazon EKS (`v1.36` Managed Cluster) |
+| **Node Infrastructure** | 1x Local Developer Machine | 3x Managed `t3.medium` EC2 Node Group |
+| **Container Registry** | Local Containerd Store | Amazon ECR (`qvalidate-fastapi`, `qvalidate-cxx-device`, etc.) |
+| **Ingress Access** | `qvalidate.local` / `localhost:3000` | AWS Application Load Balancer (`alb.ingress.kubernetes.io`) |
+| **Resource Safety** | Zero Cloud Cost | Automated Teardown via [`scripts/aws-cleanup.ps1`](file:///c:/Users/NAGESH%20REDDY/Desktop/Qualcomm/scripts/aws-cleanup.ps1) |
+
+*For complete cloud provisioning commands, cost safety analysis, and teardown scripts, see **[AWS_DEPLOYMENT.md](file:///c:/Users/NAGESH%20REDDY/Desktop/Qualcomm/docs/AWS_DEPLOYMENT.md)** and **[AWS_DEPLOYMENT_REPORT.md](file:///c:/Users/NAGESH%20REDDY/Desktop/Qualcomm/docs/AWS_DEPLOYMENT_REPORT.md)**.*
+
+---
+
+
 ## 🖼 Platform UI & Live Demonstration Gallery
 
 ### 📹 Live End-to-End Platform Tour Video (Walkthrough Demo)
