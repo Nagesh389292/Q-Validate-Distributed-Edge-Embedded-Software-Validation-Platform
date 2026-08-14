@@ -57,32 +57,33 @@ In addition to local Docker Desktop Kubernetes validation, Q-Validate includes p
 
 ```mermaid
 graph TD
-    Client[Internet / Browser] -->|HTTP Public Endpoint| ALB[AWS Application Load Balancer]
+    Client["Internet / Browser"] -->|HTTP Public Endpoint| ALB["AWS Application Load Balancer"]
     
-    subgraph AWS VPC - EKS Cluster (qvalidate-eks-cluster)
-        subgraph Public Subnets
-            ALB -->|Target Group| Ingress[AWS ALB Ingress Controller]
+    subgraph VPC ["AWS VPC - EKS Cluster (qvalidate-eks-cluster)"]
+        subgraph PublicSubnets ["Public Subnets"]
+            ALB -->|Target Group| Ingress["AWS ALB Ingress Controller"]
         end
         
-        subgraph Private Node Group (t3.medium Managed Worker Nodes)
-            Ingress -->|Path /| Frontend[Next.js Portal - 1 Pod]
-            Ingress -->|Path /api| ControlPlane[FastAPI Control Plane - 3 to 10 HPA Pods]
+        subgraph PrivateNodes ["Private Node Group (t3.medium Managed Worker Nodes)"]
+            Ingress -->|Path /| Frontend["Next.js Portal - 1 Pod"]
+            Ingress -->|Path /api| ControlPlane["FastAPI Control Plane - 3 to 10 HPA Pods"]
             
-            ControlPlane -->|gRPC / HTTP| Scheduler[Go Distributed Scheduler - 2 Pods]
-            ControlPlane -->|SQL Pool| Postgres[(PostgreSQL DB - 1 Pod)]
+            ControlPlane -->|gRPC / HTTP| Scheduler["Go Distributed Scheduler - 2 Pods"]
+            ControlPlane -->|SQL Pool| Postgres[("PostgreSQL DB - 1 Pod")]
             
-            Scheduler -->|gRPC Execution| CxxFarm[C++ Device Farm - 25 to 100 HPA Pods]
+            Scheduler -->|gRPC Execution| CxxFarm["C++ Device Farm - 25 to 100 HPA Pods"]
             
-            MetricsServer[Metrics Server] -->|Resource Metrics| HPA[Horizontal Pod Autoscaler]
+            MetricsServer["Metrics Server"] -->|Resource Metrics| HPA["Horizontal Pod Autoscaler"]
             HPA -->|Scale Trigger| ControlPlane
             HPA -->|Scale Trigger| CxxFarm
             
-            Prometheus[Prometheus Monitoring - NodePort 30090] -->|Scrape /metrics| ControlPlane
+            Prometheus["Prometheus Monitoring - NodePort 30090"] -->|Scrape /metrics| ControlPlane
             Prometheus -->|Scrape /metrics| Scheduler
-            Grafana[Grafana Analytics - NodePort 30301] -->|Query| Prometheus
+            Grafana["Grafana Analytics - NodePort 30301"] -->|Query| Prometheus
         end
     end
 ```
+
 
 ### Deployment Environment Comparison
 
